@@ -1,0 +1,34 @@
+<!-- notes.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes App - Main</title>
+    <link rel="stylesheet" href="./styles/style.css" />
+  </head>
+  <body>
+    <div id="notesPage">
+      <h1>NOTES PAGE</h1>
+      <!-------------------------------- SEARCH NOTE FORM------------------------------->
+      <form id="searchNoteForm">
+        <label for="searchTitle">Search By Title</label>
+        <input type="text" id="searchTitle" name="title" />
+        <button type="submit">Search</button>
+      </form>
+
+      <!-------------------------------- CREATE NOTE FORM------------------------------->
+      <form id="createNoteForm">
+        <label for="noteTitle">Title:</label>
+        <input type="text" id="noteTitle" name="title" required />
+        <button type="submit">Create Note</button>
+      </form>
+
+      <!-------------------------------- LIST OF NOTES ------------------------------->
+      <ul id="notesList"></ul>
+      <!-------------------------------- LIST OF NOTES ------------------------------->
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

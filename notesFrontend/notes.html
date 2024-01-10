@@ -10,24 +10,9 @@
   <body>
     <div id="notesPage">
       <h1>NOTES PAGE</h1>
-      <!-------------------------------- SEARCH NOTE FORM------------------------------->
-      <form id="searchNoteForm">
-        <label for="searchTitle">Search By Title</label>
-        <input type="text" id="searchTitle" name="title" />
-        <button type="submit">Search</button>
-      </form>
 
-      <!-------------------------------- CREATE NOTE FORM------------------------------->
-      <form id="createNoteForm">
-        <label for="noteTitle">Title:</label>
-        <input type="text" id="noteTitle" name="title" required />
-        <button type="submit">Create Note</button>
-      </form>
-
-      <!-------------------------------- LIST OF NOTES ------------------------------->
-      <ul id="notesList"></ul>
-      <!-------------------------------- LIST OF NOTES ------------------------------->
-    </div>
+      <button id = "createNoteButton">Create Note</button>
+   <div id = "noteContainer"></div>
 
     <script type="module" src="/src/main.ts"></script>
   </body>

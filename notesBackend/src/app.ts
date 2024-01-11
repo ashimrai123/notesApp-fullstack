@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import noteRoutes from './routers/noteRoutes';
-import userRouter from './routers/userRoutes';
+import userRoutes from './routers/userRoutes';
 import logger from './middlewares/logger';
 import errorHandler from './middlewares/errorHandler';
 import cors from 'cors';
@@ -25,7 +25,7 @@ app.use(express.json());
 
 //routes 
 app.use(noteRoutes);
-app.use(userRouter);
+app.use(userRoutes);
 
 //error handler
 app.use(errorHandler);

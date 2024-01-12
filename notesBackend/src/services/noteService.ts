@@ -10,20 +10,71 @@ export const getAllNotes = async (): Promise<note[]> => {
   return await db(notesTable).select("*");
 };
 
+export const getNoteById = async (noteId: number): Promise<note | null> => {
+  const [noteRecord] = await db(notesTable)
+    .select("*")
+    .where("id", "=", noteId);
+
+  return noteRecord ? (noteRecord as note) : null;
+};
+
+export const deleteNote = async (id: number): Promise<boolean> => {
+  try {
+    const deleteCount = await db(notesTable).where("id", "=", id).del();
+    return deleteCount > 0;
+  } catch (error) {
+    console.error("Error deleting note:", error);
+    return false;
+  }
+};
+
+export const deleteFolder = async (id: number): Promise<boolean> => {
+  try {
+    const deleteCount = await db(folderTable).where("id", "=", id).del();
+    return deleteCount > 0;
+  } catch (error) {
+    console.error("Error deleting folder:", error);
+    return false;
+  }
+};
+
+export const updateNote = async (
+  id: number,
+  content: string
+): Promise<note | null> => {
+  try {
+    //Extract the first 10 letters of the content for the tile from the first line
+    const lines = content.split("\n");
+    const title = lines[0].substring(0, 20);
+
+    const [updateNote] = await db(notesTable)
+      .where("id", "=", id)
+      .update({ content, title })
+      .returning("*");
+
+    return updateNote ? (updateNote as note) : null;
+  } catch (error) {
+    console.error("Error updating notes:", error);
+    return null;
+  }
+};
+
 export const getAllNotesByFolderId = async (id: number): Promise<note[]> => {
-  return await db(notesTable).select("*").where("folder_id", "like", id);
+  return await db(notesTable).select("*").where("folder_id", "=", id);
 };
 
 export const getAllFolders = async (): Promise<folder[]> => {
   return await db(folderTable).select("*");
 };
 
-export const createNote = async (content: string): Promise<note> => {
+export const createNote = async (
+  title: string,
+  folderId: number
+): Promise<note> => {
   //Extract the first 10 letters as the title
-  const title = content.substring(0, 4);
 
   const [newTask] = await db(notesTable)
-    .insert({ title, content, folder_id: 1 })
+    .insert({ title, folder_id: folderId, content: "" })
     .returning("*");
 
   return newTask as note;
@@ -31,7 +82,7 @@ export const createNote = async (content: string): Promise<note> => {
 
 export const createFolder = async (folder_name: string): Promise<folder> => {
   const [newFolder] = await db(folderTable)
-    .insert({ folder_name })
+    .insert({ folder_name, userId: "2" })
     .returning("*");
 
   return newFolder as folder;

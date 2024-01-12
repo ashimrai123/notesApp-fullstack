@@ -1,0 +1,9 @@
+error: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at new NodeError (node:internal/errors:405:5)
+    at ServerResponse.setHeader (node:_http_outgoing:648:11)
+    at ServerResponse.header (C:\Users\ashim\Desktop\notesApp2\notesApp-fullstack\notesBackend\node_modules\express\lib\response.js:794:10)
+    at ServerResponse.json (C:\Users\ashim\Desktop\notesApp2\notesApp-fullstack\notesBackend\node_modules\express\lib\response.js:275:10)
+    at C:\Users\ashim\Desktop\notesApp2\notesApp-fullstack\notesBackend\src\routers\noteRoutes.ts:18:9
+    at Generator.next (<anonymous>)
+    at fulfilled (C:\Users\ashim\Desktop\notesApp2\notesApp-fullstack\notesBackend\src\routers\noteRoutes.ts:28:58)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {"timestamp":"2024-01-11T19:02:05.139Z"}

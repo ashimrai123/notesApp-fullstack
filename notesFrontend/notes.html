@@ -8,16 +8,29 @@
     <link rel="stylesheet" href="./styles/style.css" />
   </head>
   <body>
-    <div id="folderPage">
-      <h1>Folders</h1>
-      <div id="folderContainer"></div>
-    </div>
-    <div id="notesPage">
-      <h1>Notes</h1>
+    <main>
+      <div class="navSide">
+        <div class="folderPage">
+          <h1>Folders</h1>
+          <input type="text" placeholder="Add Folder" id="folderNameInput" />
+          <button id="createFolderButton">Create Folder</button>
+          <div id="folderContainer"></div>
+        </div>
+        <div class="notesPage">
+          <h1>Notes</h1>
 
-      <button id="createNoteButton">Create Note</button>
-      <div id="noteContainer"></div>
-    </div>
+          <button id="createNoteButton">Create Note</button>
+          <div id="noteContainer"></div>
+        </div>
+      </div>
+      <div class="textSide">
+        <div class="note">
+          <h1>Note</h1>
+          <div id="noteArea"></div>
+        </div>
+      </div>
+    </main>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

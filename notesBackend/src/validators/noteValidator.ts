@@ -8,8 +8,8 @@ export const createNoteSchema = Joi.object({
   folderId: Joi.number(),
 });
 
-// export const createFolderSchema = Joi.object({
-//   folderName: Joi.string(),
-//   id: Joi.number(),
-//   userId: Joi.number(),
-// });
+export const createFolderSchema = Joi.object({
+  folder_name: Joi.string().min(1),
+  id: Joi.number(),
+  userId: Joi.number(),
+});

@@ -1,33 +1,54 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
 main {
+  margin: 10px 15px;
   display: flex;
   flex-direction: row;
-  gap: 10%;
   justify-content: left;
+}
+
+header {
+  padding: 5px 15px;
+  background-color: #1280c5;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#notesHeading {
+  color: white;
+}
+
+.userLogOut {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logOutButton {
+  border-radius: 10px;
+}
+
+.userSVG {
+  height: 48px;
+}
+
+.userNameContainer {
+  color: white;
 }
 
 #folderContainer {
   display: flex;
   flex-direction: column;
-  width: 100%;
 }
 
 #noteContainer {
   display: flex;
   flex-direction: column;
-  width: 100%;
-}
-
-.notesPage {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.navSide {
-  display: flex;
-  width: 30%;
-  gap: 10%;
-  justify-content: space-between;
 }
 
 button {
@@ -47,6 +68,142 @@ button {
 button:hover {
   background-color: #2077b4; /* Different hover color */
   color: #ffffff;
+}
+
+#noteArea {
+  background-color: blue;
+  width: 550px;
+}
+
+.folderNav {
+  background-color: #fbfbfd;
+  height: 700px;
+  width: 300px;
+  padding: 0px 20px 0px 0px;
+}
+
+.folderButtonsContainer {
+  display: flex;
+}
+
+.addFolder {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.folderButton {
+  width: 300px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: none;
+  background-color: none;
+}
+
+#folderNameInput {
+  width: 180px;
+  height: 20px;
+}
+
+#createFolderButton {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+}
+
+.createFolderImage {
+  height: 40px;
+}
+
+.folderImage {
+  height: 30px;
+}
+
+.folderOptionButton {
+  border: none;
+  padding: 14px;
+  background: none;
+}
+
+.folderOptionImage {
+  height: 20px;
+}
+
+.deleteFolderImage {
+  height: 30px;
+}
+
+.folderAllOptionsContainer {
+  display: block;
+  position: absolute;
+  z-index: 1;
+}
+
+.notesNav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+}
+
+.notesNavHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#searchNotesBar {
+  height: 20px;
+}
+
+#createNoteButton {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+.createNoteImage {
+  height: 40px;
+}
+
+.noteButtonsContainer {
+  display: flex;
+}
+
+.noteButton {
+  width: 240px;
+  border: none;
+}
+
+.noteOptionButton {
+  border: none;
+}
+
+.noteOptionImage {
+  height: 20px;
+}
+
+.deleteNoteButton {
+  width: 100px;
+}
+
+.deleteNoteImage {
+  height: 30px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.exportImage {
+  height: 20px;
+}
+
+.deleteNoteToolImage {
+  height: 20px;
 }
 
 /*# sourceMappingURL=style.css.map */

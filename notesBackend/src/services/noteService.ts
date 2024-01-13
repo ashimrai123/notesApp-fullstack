@@ -30,7 +30,9 @@ export const deleteNote = async (id: number): Promise<boolean> => {
 
 export const deleteFolder = async (id: number): Promise<boolean> => {
   try {
+    await db(notesTable).where("folderId", "=", id).del();
     const deleteCount = await db(folderTable).where("id", "=", id).del();
+    console.log("delete Executed");
     return deleteCount > 0;
   } catch (error) {
     console.error("Error deleting folder:", error);

@@ -1,34 +1,18 @@
-main {
-  display: flex;
-  flex-direction: row;
-  gap: 10%;
-  justify-content: left;
-}
-
 #folderContainer {
   display: flex;
   flex-direction: column;
-  width: 100%;
 }
 
 #noteContainer {
   display: flex;
   flex-direction: column;
-  width: 100%;
 }
 
-.notesPage {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.navSide {
-  display: flex;
-  width: 30%;
-  gap: 10%;
-  justify-content: space-between;
-}
+// .navSide {
+//   display: flex;
+//   width: 550px;
+// gap: 10%;
+// }
 
 button {
   display: inline-block;
@@ -47,4 +31,9 @@ button {
 button:hover {
   background-color: #2077b4; /* Different hover color */
   color: #ffffff;
+}
+
+#noteArea {
+  background-color: blue;
+  width: 550px;
 }

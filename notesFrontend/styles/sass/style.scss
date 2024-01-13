@@ -1,2 +1,18 @@
-@import "./partials/nav";
+* {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  margin: 10px 15px;
+  display: flex;
+  flex-direction: row;
+  //   gap: 10%;
+  justify-content: left;
+}
+
+@import "./partials/header";
 @import "./partials/notes";
+@import "./partials/folderNav";
+@import "./partials/notesNav";
+@import "./partials/toolbar";

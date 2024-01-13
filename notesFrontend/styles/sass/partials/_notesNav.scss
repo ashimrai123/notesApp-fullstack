@@ -1,0 +1,60 @@
+.notesNav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+}
+
+.notesNavHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#searchNotesBar {
+  height: 20px;
+}
+
+#createNoteButton {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+.createNoteImage {
+  height: 40px;
+}
+
+.sortByButton {
+  // padding:0;
+}
+
+.noteButtonsContainer {
+  display: flex;
+  //   justify-content: space-between;
+}
+
+.noteButton {
+  width: 240px;
+  border: none;
+}
+
+.noteOptionButton {
+  border: none;
+}
+
+.noteOptionImage {
+  height: 20px;
+}
+
+.deleteNoteButton {
+  width: 100px;
+}
+
+.deleteNoteImage {
+  height: 30px;
+}
+
+// .folderOptionContainer {
+//   display: none;
+// }

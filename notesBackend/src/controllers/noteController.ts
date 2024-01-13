@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import * as services from "../services/noteService";
-import { createNoteSchema } from "../validators/noteValidator";
+import {
+  createNoteSchema,
+  createFolderSchema,
+} from "../validators/noteValidator";
 
 export const getAllNotes = async (
   req: Request,
@@ -154,8 +157,11 @@ export const createFolder = async (
   res: Response
 ): Promise<void> => {
   try {
-    //Validate request body
-
+    // const { error } = createFolderSchema.validate(req.body);
+    // if (error) {
+    //   res.status(400).json({ error: error.message });
+    //   return;
+    // }
     const { folder_name } = req.body;
     const newFolder = await services.createFolder(folder_name);
     res.status(201).json(newFolder);

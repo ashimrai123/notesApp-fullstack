@@ -1,0 +1,33 @@
+header {
+  padding: 5px 15px;
+  background-color: #1280c5;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#notesHeading {
+  color: white;
+}
+
+.userLogOut {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logOutButton {
+  border-radius: 10px;
+}
+
+.userSVG {
+  height: 48px;
+}
+
+.userNameContainer {
+  color: white;
+}
+
+.userName {
+}

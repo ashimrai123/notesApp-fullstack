@@ -1,8 +1,10 @@
 .folderNav {
   background-color: #fbfbfd;
-  height: 700px;
+  border: 2px solid lightgrey;
+
+  // height: 700px;
   width: 300px;
-  padding: 0px 20px 0px 0px;
+  padding: 0px 20px 0px 10px;
 }
 
 .folderButtonsContainer {
@@ -13,23 +15,28 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 290px;
 }
 
 #folderContainer {
+  width: 290px;
+}
+
+.searchFolderBar {
+  width: 290px;
 }
 
 .folderButton {
-  width: 300px;
+  width: 245px;
   display: flex;
   align-items: center;
   gap: 5px;
   border: none;
   background-color: none;
+  // background: none;
 }
 
 #folderNameInput {
-  width: 180px;
-  height: 20px;
 }
 
 #createFolderButton {
@@ -37,6 +44,7 @@
   align-items: center;
   padding: 0;
   border: none;
+  background: none;
 }
 
 .createFolderImage {
@@ -57,15 +65,58 @@
   height: 20px;
 }
 
+.folderOptionButton:hover {
+  background-color: #0e649a;
+}
+
+.folderOptionImage:hover {
+  background-color: #0e649a;
+}
+
 .deleteFolderImage {
   height: 30px;
+}
+
+.renameFolderImage {
+  height: 30px;
+}
+
+.deleteFolderButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 120px;
+  border-top: 1px solid lightgrey;
+  border-bottom: 2px solid lightgrey;
+  border-left: 1px solid lightgrey;
+  border-right: 1px solid lightgrey;
+
+  padding: 5px 10px 5px 10px;
+  border-radius: 10px 10px 0 0;
+
+  background-color: #e6e6e6;
+}
+
+.renameFolderButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 120px;
+  border-top: none;
+  border-bottom: 1px solid lightgrey;
+  border-left: 1px solid lightgrey;
+  border-right: 1px solid lightgrey;
+  padding: 5px 10px 5px 10px;
+  border-radius: 0 0 10px 10px;
+  background-color: #e6e6e6;
 }
 
 .deleteFolderButton {
 }
 
 .folderAllOptionsContainer {
-  display: block;
+  display: flex;
+  flex-direction: column;
   position: absolute;
   z-index: 1;
 }

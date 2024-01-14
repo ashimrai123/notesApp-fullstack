@@ -1,0 +1,57 @@
+/* Hide the main scrollbar by default */
+main::-webkit-scrollbar {
+  width: 0;
+}
+
+/* Show the scrollbar when scrolling */
+main:hover::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Style for the scrollbar handle or thumb */
+main::-webkit-scrollbar-thumb {
+  background-color: #3498db; /* Blue color for the thumb */
+  border-radius: 4px;
+}
+
+/* Style for the scrollbar track when not being hovered */
+main::-webkit-scrollbar-track {
+  background-color: #ecf0f1; /* Light gray color for the track */
+}
+
+/* Style for the scrollbar handle or thumb when being hovered */
+main::-webkit-scrollbar-thumb:hover {
+  background-color: #2980b9; /* Darker blue color when hovered */
+}
+
+/* Apply the scrollbar styles to each column individually */
+.folderNav::-webkit-scrollbar,
+.notesNav::-webkit-scrollbar,
+.textSide::-webkit-scrollbar {
+  width: 0;
+}
+
+.folderNav:hover::-webkit-scrollbar,
+.notesNav:hover::-webkit-scrollbar,
+.textSide:hover::-webkit-scrollbar {
+  width: 8px;
+}
+
+.folderNav::-webkit-scrollbar-thumb,
+.notesNav::-webkit-scrollbar-thumb,
+.textSide::-webkit-scrollbar-thumb {
+  background-color: #3498db; /* Blue color for the thumb */
+  border-radius: 4px;
+}
+
+.folderNav::-webkit-scrollbar-track,
+.notesNav::-webkit-scrollbar-track,
+.textSide::-webkit-scrollbar-track {
+  background-color: #ecf0f1; /* Light gray color for the track */
+}
+
+.folderNav::-webkit-scrollbar-thumb:hover,
+.notesNav::-webkit-scrollbar-thumb:hover,
+.textSide::-webkit-scrollbar-thumb:hover {
+  background-color: #2980b9; /* Darker blue color when hovered */
+}

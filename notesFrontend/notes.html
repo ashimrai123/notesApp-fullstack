@@ -75,6 +75,9 @@
             </svg>
           </button>
         </div>
+        <div class="searchFolder">
+          <input class="searchFolderBar" type="text" placeholder="Search " />
+        </div>
         <div id="folderContainer">
           <!-- Classes: folderButtonsContainer, folderButton, deleteFolderButton -->
         </div>
@@ -86,8 +89,9 @@
               class="createNoteImage"
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              stroke="#000000"
+              id="create-note"
+              class="icon glyph"
+              fill="#1280c5"
             >
               <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
               <g
@@ -97,53 +101,26 @@
               ></g>
               <g id="SVGRepo_iconCarrier">
                 <path
-                  stroke="#1280c5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 15V5a2 2 0 0 0-2-2h-7m9 12v.172a2 2 0 0 1-.586 1.414l-3.828 3.828a2 2 0 0 1-1.414.586H15m6-6h-4a2 2 0 0 0-2 2v4m0 0H5a2 2 0 0 1-2-2v-7m10-5h4m-7 4h7M7 15h4M6 3v3m0 3V6m0 0h3M6 6H3"
+                  d="M20.71,3.29a2.91,2.91,0,0,0-2.2-.84,3.25,3.25,0,0,0-2.17,1L9.46,10.29s0,0,0,0a.62.62,0,0,0-.11.17,1,1,0,0,0-.1.18l0,0L8,14.72A1,1,0,0,0,9,16a.9.9,0,0,0,.28,0l4-1.17,0,0,.18-.1a.62.62,0,0,0,.17-.11l0,0,6.87-6.88a3.25,3.25,0,0,0,1-2.17A2.91,2.91,0,0,0,20.71,3.29Z"
+                ></path>
+                <path
+                  d="M20,22H4a2,2,0,0,1-2-2V4A2,2,0,0,1,4,2h8a1,1,0,0,1,0,2H4V20H20V12a1,1,0,0,1,2,0v8A2,2,0,0,1,20,22Z"
+                  style="fill: #1280c5"
                 ></path>
               </g>
             </svg>
           </button>
-          <button class="sortByButton">Sort By</button>
+          <!-- <button class="sortByButton">Sort By</button> -->
         </div>
-        <input type="text" placeholder="Notes" id="searchNotesBar" />
+        <input type="text" placeholder="Search" id="searchNotesBar" />
 
         <div id="noteContainer">
           <!-- Classes: noteButtonsContainer, noteButton, deleteNoteButton -->
         </div>
       </div>
       <!-- </div> -->
-      <div class="textSide">
+      <div class="mainNote">
         <div class="toolbar">
-          <button>
-            <svg
-              class="deleteNoteToolImage"
-              viewBox="0 0 1024 1024"
-              class="icon"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="#000000"
-            >
-              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
-                <path
-                  d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z"
-                  fill="#3688FF"
-                ></path>
-                <path
-                  d="M917.3 256H106.7C83.1 256 64 236.9 64 213.3s19.1-42.7 42.7-42.7h810.7c23.6 0 42.7 19.1 42.7 42.7S940.9 256 917.3 256zM618.7 128H405.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h213.3c23.6 0 42.7 19.1 42.7 42.7S642.2 128 618.7 128zM405.3 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7S448 403 448 426.6v256c0 23.6-19.1 42.7-42.7 42.7zM618.7 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v256c-0.1 23.6-19.2 42.7-42.7 42.7z"
-                  fill="#5F6379"
-                ></path>
-              </g>
-            </svg>
-          </button>
           <button>font</button>
           <button>table(optional)</button>
           <button class="export">

@@ -1,18 +1,23 @@
 .notesNav {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  // gap: 10px;
   width: 300px;
+  padding: 6px 20px 0px 20px;
+  border: 2px solid lightgrey;
+}
+
+#noteContainer {
 }
 
 .notesNavHead {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 260px;
 }
 
 #searchNotesBar {
-  height: 20px;
 }
 
 #createNoteButton {
@@ -22,16 +27,22 @@
 }
 
 .createNoteImage {
-  height: 40px;
+  height: 35px;
 }
 
 .sortByButton {
   // padding:0;
 }
 
+#searchNotesBar {
+  width: 290px;
+}
+
 .noteButtonsContainer {
   display: flex;
   //   justify-content: space-between;
+  border-bottom: 1px solid lightgrey;
+  width: 290px;
 }
 
 .noteButton {
@@ -47,14 +58,73 @@
   height: 20px;
 }
 
+.noteOptionButton:hover {
+  background-color: #0e649a;
+}
+
+.noteOptionImage:hover {
+  background-color: #0e649a;
+}
+
 .deleteNoteButton {
-  width: 100px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 140px;
+  border-top: 1px solid lightgrey;
+  border-bottom: 2px solid lightgrey;
+  border-left: 1px solid lightgrey;
+  border-right: 1px solid lightgrey;
+
+  padding: 5px 10px 5px 10px;
+  border-radius: 10px 10px 0 0;
+
+  background-color: #e6e6e6;
+}
+
+.pinNoteButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 140px;
+  border-top: none;
+  border-bottom: 2px solid lightgrey;
+  border-left: 1px solid lightgrey;
+  border-right: 1px solid lightgrey;
+  padding: 5px 15px 5px 15px;
+  border-radius: 0;
+  background-color: #e6e6e6;
+}
+
+.lockNoteButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 140px;
+  border-top: none;
+  border-bottom: 1px solid lightgrey;
+  border-left: 1px solid lightgrey;
+  border-right: 1px solid lightgrey;
+  padding: 5px 10px 5px 10px;
+  border-radius: 0 0 10px 10px;
+  background-color: #e6e6e6;
 }
 
 .deleteNoteImage {
   height: 30px;
 }
 
-// .folderOptionContainer {
-//   display: none;
-// }
+.noteAllOptionsContainer {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 1;
+}
+
+.pinNoteImage {
+  height: 30px;
+}
+
+.lockNoteImage {
+  height: 30px;
+}

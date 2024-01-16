@@ -1,23 +1,79 @@
 import { handleLogin } from "./user/login";
 import { handleSignup } from "./user/signup";
-import { createNote } from "./notes/notes";
-import { createFolder } from "./notes/folders";
+import { handleLogout } from "./user/logout";
+import { checkAuthAndRedirect } from "./user/auth";
+import { createNote, deleteNoteById, updateNotes } from "./notes/notes";
+import { createFolder, deleteFolderById } from "./notes/folders";
+import { textArea } from "./notes/textArea";
 import axios from "axios";
 
 let selectedFolderId: number = 1; //By default first folder would be selected
 let selectedNoteId: number = 1;
 let debounceTimer: number;
 
+let userId: number = parseInt(localStorage.getItem("userIdStored") || "0");
+//Responsive
+let storedValue: boolean = false;
+let storedValueFolder: boolean = false;
+
+handleLogout();
+checkAuthAndRedirect();
+
+const notesNav = document.querySelector(".notesNav") as HTMLElement;
+const mainNote = document.querySelector(".mainNote") as HTMLElement;
+const folderNav = document.querySelector(".folderNav") as HTMLElement;
+const backToNotesButton = document.querySelector(
+  ".toolbar__backToNotes"
+) as HTMLButtonElement;
+backToNotesButton.addEventListener("click", () => {
+  mainNote.style.display = "none";
+  notesNav.style.display = "block";
+  storedValue = true;
+});
+
+const backToFolders = document.querySelector(".backToFolders") as HTMLElement;
+backToFolders.addEventListener("click", () => {
+  notesNav.style.display = "none";
+  folderNav.style.display = "block";
+  storedValueFolder = true;
+});
+
+window.addEventListener("resize", () => {
+  if (window.innerWidth <= 780 && storedValue) {
+    notesNav.style.display = "block";
+    mainNote.style.display = "none";
+  }
+  if (window.innerWidth > 780 && storedValue && window.innerWidth < 1088) {
+    folderNav.style.display = " block";
+    notesNav.style.display = "block";
+    mainNote.style.display = "block";
+  }
+  if (
+    window.innerWidth > 780 &&
+    storedValueFolder &&
+    window.innerWidth <= 1088
+  ) {
+    notesNav.style.display = "block";
+    folderNav.style.display = "none";
+  }
+
+  if (window.innerWidth > 1088 && storedValueFolder) {
+    folderNav.style.display = " block";
+    notesNav.style.display = "block";
+    mainNote.style.display = "block";
+  }
+});
 // Entry point
 const init = async () => {
   handleLogin();
+
   handleSignup();
   await initializePage();
 
   const userNameContainer = document.getElementById("userNameContainer");
   const userName = document.createElement("div");
   userName.classList.add("userName");
-  userName.innerHTML = "dog";
+  userName.innerHTML = "user__" + userId;
   userNameContainer?.append(userName); //RETRIEVE USERNAME FROM USER
 
   document
@@ -42,7 +98,7 @@ const init = async () => {
         const folderName = folderNameInput.value;
 
         if (folderName !== "") {
-          await createFolder(folderName);
+          await createFolder(folderName, userId);
           folderNameInput.value = ""; // Clear the input field after successful folder creation
         } else {
           console.log("Input field is empty");
@@ -54,7 +110,6 @@ const init = async () => {
         }, 100);
       }
     });
-
   document
     .getElementById("createFolderButton")
     ?.addEventListener("click", async () => {
@@ -65,7 +120,7 @@ const init = async () => {
         document.getElementById("folderNameInput") as HTMLInputElement
       ).value;
       if (folderName !== "") {
-        await createFolder(folderName);
+        await createFolder(folderName, userId);
         folderNameInput.value = ""; //Clear the input field after successful folder creation
       } else {
         console.log("input field is empty");
@@ -83,15 +138,17 @@ const folderContainer = document.getElementById(
   "folderContainer"
 ) as HTMLElement;
 
-const noteArea = document.getElementById("noteArea") as HTMLElement;
-
-const debounceUpdatedNotes = async (noteId: number, content: string) => {
+export const debounceUpdatedNotes = async (noteId: number, content: string) => {
   clearTimeout(debounceTimer);
 
   //Set a timeout to call updateNotes
   debounceTimer = setTimeout(async () => {
     try {
       await updateNotes(noteId, content);
+
+      // Saving the selected textarea content to localStorage
+      localStorage.setItem("selectedTextareaContent", content);
+
       //Giving some delay to give little time for database operation
       setTimeout(async () => {
         await initializePage();
@@ -102,89 +159,38 @@ const debounceUpdatedNotes = async (noteId: number, content: string) => {
   }, 500);
 };
 
-const deleteFolderById = async (folderId: number) => {
-  try {
-    await axios.delete(`http://localhost:8000/folder/${folderId}`);
-    console.log("Folder deleted successfully");
-    //Giving some delay to give little time for database operation
-    setTimeout(async () => {
-      await initializePage();
-    }, 100);
-  } catch (error) {
-    console.log("Error deleting folder: ", error);
-  }
-};
+//---------------------FETCH NOTES BY FOLDER ID ---------------------------------//
 
-const deleteNoteById = async (noteId: number) => {
-  try {
-    await axios.delete(`http://localhost:8000/note/${noteId}`);
-    console.log("Note deleted successfully");
-    //Giving some delay to give little time for database operation
-    setTimeout(async () => {
-      await initializePage();
-    }, 100);
-  } catch (error) {
-    console.log("Error deleting note: ", error);
-  }
-};
+const searchNoteBar = document.querySelector(
+  ".searchNotesBar"
+) as HTMLInputElement;
 
-//Function to update notes
-const updateNotes = async (noteId: number, content: string) => {
-  try {
-    await axios.put(`http://localhost:8000/updateNote/${noteId}`, { content });
-    console.log("Note updated successfully");
-  } catch (error) {
-    console.log("Error updating notes:", error);
-  }
-};
-
-//--------------------- RESIZE NOTES AREA WITH WINDOWSIZE ---------------------------------//
-window.addEventListener("resize", () => {
-  textArea(selectedNoteId);
+searchNoteBar.addEventListener("input", () => {
+  const searchQuery = searchNoteBar.value;
+  const selectedFolderId = localStorage.getItem("selectedFolderId");
+  fetchNotesByFolderId(Number(selectedFolderId), searchQuery);
 });
 
-//--------------------- Text Area ---------------------------------//
-const textArea = async (noteId: number) => {
-  try {
-    const response = await axios.get(
-      `http://localhost:8000/notearea/${noteId}`
-    );
-
-    const noteData = await response.data;
-    console.log(noteData.title);
-    noteArea.innerHTML = "";
-
-    //Calculate the number of rows and columns based on the dimensions of the page
-    const rows = window.innerHeight / 18;
-    const columns = window.innerWidth / 18;
-
-    const textarea = document.createElement("textarea");
-    textarea.rows = rows;
-    textarea.cols = columns;
-    textarea.value = noteData.content;
-
-    //--------------------------------Update Notes --------------------------------//
-    textarea.addEventListener("input", () => {
-      debounceUpdatedNotes(noteId, textarea.value);
-    });
-
-    const noteDiv = document.createElement("div");
-    noteDiv.appendChild(textarea);
-    noteArea.appendChild(noteDiv);
-  } catch (error) {
-    console.log("Error fetching notes:", error);
-  }
-};
-
-const fetchNotesByFolderId = async (folderId: number) => {
+const fetchNotesByFolderId = async (
+  folderId: number,
+  searchQuery: string = ""
+) => {
   try {
     const response = await axios.get(`http://localhost:8000/note/${folderId}`);
     const notes = await response.data;
     console.log(response);
 
+    // Check if there's a selected note in localStorage
+    const selectedNoteIdFromStorage = localStorage.getItem("selectedNoteId");
+
     noteContainer.innerHTML = "";
+
+    // Filter notes based on the search query
+    const filteredNotes = notes.filter((note: any) =>
+      note.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
     //-------Create note list --------------//
-    notes.forEach((note: any) => {
+    filteredNotes.forEach((note: any) => {
       const noteButtonsContainer = document.createElement("div");
       // Add class to the noteButtonsContainer
       noteButtonsContainer.classList.add("noteButtonsContainer");
@@ -226,27 +232,42 @@ const fetchNotesByFolderId = async (folderId: number) => {
           previousNoteButton.style.backgroundColor = "";
           previousNoteButton.style.color = "";
         }
-        // noteButton.style.backgroundColor = "#0a4a6e";
         noteButton.style.backgroundColor = "#0e649a";
 
         noteButton.style.color = "#ffffff";
 
+        // Store selected note information in localStorage
+        localStorage.setItem("selectedNoteId", note.id);
+
         previousNoteButton = noteButton;
+
+        if (window.innerWidth <= 780) {
+          notesNav.style.display = "none";
+          mainNote.style.display = "block";
+        }
 
         textArea(note.id);
         selectedNoteId = note.id;
       });
 
+      // Check if the current note is the selected one from localStorage
+      if (note.id === selectedNoteIdFromStorage) {
+        noteButton.style.backgroundColor = "#0e649a";
+        noteButton.style.color = "#ffffff";
+        previousNoteButton = noteButton;
+        // Handle the selected note
+      }
+
       noteOptionButton.addEventListener("click", () => {
         if (noteOptionContainer.innerHTML === "") {
           noteOptionContainer?.appendChild(deleteNoteButton);
-          noteOptionContainer?.appendChild(pinNoteButton);
-          noteOptionContainer?.appendChild(lockNoteButton);
+          // noteOptionContainer?.appendChild(pinNoteButton);
+          // noteOptionContainer?.appendChild(lockNoteButton);
           //Get the position of the clicked button
           const buttonRect = noteOptionButton.getBoundingClientRect();
 
           //set the position fo the noteOptionContainer
-          noteOptionContainer.style.top = buttonRect.bottom - 46 + "px";
+          noteOptionContainer.style.top = buttonRect.bottom - 43 + "px";
           noteOptionContainer.style.left = buttonRect.left - 140 + "px";
         } else {
           noteOptionContainer.innerHTML = "";
@@ -287,14 +308,27 @@ const fetchNotesByFolderId = async (folderId: number) => {
   }
 };
 
+const searchFolderBar = document.querySelector(
+  ".searchFolderBar"
+) as HTMLInputElement;
+
+searchFolderBar.addEventListener("input", () => {
+  const searchQuery = searchFolderBar.value;
+  initializePage(searchQuery);
+});
+
 //--------------------Initialize the page contents---------------------------//
 let previousFolderButton: HTMLButtonElement | null = null;
 let previousNoteButton: HTMLButtonElement | null = null;
 
-const initializePage = async () => {
+export const initializePage = async (searchQuery = "") => {
   try {
-    const response = await axios.get("http://localhost:8000/folder");
+    // alert(userId);
+    const response = await axios.get(`http://localhost:8000/folder/${userId}`);
     const folders = await response.data;
+    // Check if there's a selected folder in localStorage
+    const selectedFolderIdFromStorage =
+      localStorage.getItem("selectedFolderId");
 
     console.log("Fetched all folders in the database");
     folderContainer.innerHTML = "";
@@ -303,102 +337,127 @@ const initializePage = async () => {
     folders.forEach((folder: any) => {
       console.log("Displaying folders on the page");
 
-      const folderButtonsContainer = document.createElement("div");
-      //Add class to the folderButtonsContainer
-      folderButtonsContainer.classList.add("folderButtonsContainer");
+      if (folder.folderName.toLowerCase().includes(searchQuery.toLowerCase())) {
+        const folderButtonsContainer = document.createElement("div");
+        //Add class to the folderButtonsContainer
+        folderButtonsContainer.classList.add("folderButtonsContainer");
 
-      const folderButton = document.createElement("button");
-      //Add class to the folder button
-      folderButton.classList.add("folderButton");
+        const folderButton = document.createElement("button");
+        //Add class to the folder button
+        folderButton.classList.add("folderButton");
 
-      const folderOptionContainer = document.createElement("div");
-      //Add class to the folder option button
-      folderOptionContainer.classList.add("folderAllOptionsContainer");
+        const folderOptionContainer = document.createElement("div");
+        //Add class to the folder option button
+        folderOptionContainer.classList.add("folderAllOptionsContainer");
 
-      const folderOptionButton = document.createElement("button");
-      //Add class to the folder option button
-      folderOptionButton.classList.add("folderOptionButton");
+        const folderOptionButton = document.createElement("button");
+        //Add class to the folder option button
+        folderOptionButton.classList.add("folderOptionButton");
 
-      const deleteFolderButton = document.createElement("button");
-      //Add class to the Delete folder button
-      deleteFolderButton.classList.add("deleteFolderButton");
+        const deleteFolderButton = document.createElement("button");
+        //Add class to the Delete folder button
+        deleteFolderButton.classList.add("deleteFolderButton");
 
-      const renameFolderButton = document.createElement("button");
-      //Add class to the Delete folder button
-      renameFolderButton.classList.add("renameFolderButton");
+        const renameFolderButton = document.createElement("button");
+        //Add class to the Delete folder button
+        renameFolderButton.classList.add("renameFolderButton");
 
-      folderButton.innerHTML = `<svg class = "folderImage" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M242.3 743.4h603.4c27.8 0 50.3-22.5 50.3-50.3V192H192v501.1c0 27.8 22.5 50.3 50.3 50.3z" fill="#b5b5b5"></path><path d="M178.3 807.4h603.4c27.8 0 50.3-22.5 50.3-50.3V256H128v501.1c0 27.8 22.5 50.3 50.3 50.3z" fill="#d3d3cf"></path><path d="M960 515v384c0 35.3-28.7 64-64 64H128c-35.3 0-64-28.7-64-64V383.8c0-35.3 28.7-64 64-64h344.1c24.5 0 46.8 13.9 57.5 35.9l46.5 95.3H896c35.3 0 64 28.7 64 64z" fill="#1b7bb6"></path><path d="M704 512c0-20.7-1.4-41.1-4.1-61H576.1l-46.5-95.3c-10.7-22-33.1-35.9-57.5-35.9H128c-35.3 0-64 28.7-64 64V899c0 6.7 1 13.2 3 19.3C124.4 945 188.5 960 256 960c247.4 0 448-200.6 448-448z" fill="#1280c5"></path></g></svg>`;
-      folderButton.innerHTML += folder.folderName;
+        folderButton.innerHTML = `<svg class = "folderImage" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M242.3 743.4h603.4c27.8 0 50.3-22.5 50.3-50.3V192H192v501.1c0 27.8 22.5 50.3 50.3 50.3z" fill="#b5b5b5"></path><path d="M178.3 807.4h603.4c27.8 0 50.3-22.5 50.3-50.3V256H128v501.1c0 27.8 22.5 50.3 50.3 50.3z" fill="#d3d3cf"></path><path d="M960 515v384c0 35.3-28.7 64-64 64H128c-35.3 0-64-28.7-64-64V383.8c0-35.3 28.7-64 64-64h344.1c24.5 0 46.8 13.9 57.5 35.9l46.5 95.3H896c35.3 0 64 28.7 64 64z" fill="#1b7bb6"></path><path d="M704 512c0-20.7-1.4-41.1-4.1-61H576.1l-46.5-95.3c-10.7-22-33.1-35.9-57.5-35.9H128c-35.3 0-64 28.7-64 64V899c0 6.7 1 13.2 3 19.3C124.4 945 188.5 960 256 960c247.4 0 448-200.6 448-448z" fill="#1280c5"></path></g></svg>`;
+        folderButton.innerHTML += folder.folderName;
 
-      // deleteFolderButton.innerHTML = `<svg class = "deleteFolderImage" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z" fill="#3688FF"></path><path d="M917.3 256H106.7C83.1 256 64 236.9 64 213.3s19.1-42.7 42.7-42.7h810.7c23.6 0 42.7 19.1 42.7 42.7S940.9 256 917.3 256zM618.7 128H405.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h213.3c23.6 0 42.7 19.1 42.7 42.7S642.2 128 618.7 128zM405.3 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7S448 403 448 426.6v256c0 23.6-19.1 42.7-42.7 42.7zM618.7 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v256c-0.1 23.6-19.2 42.7-42.7 42.7z" fill="#5F6379"></path></g></svg>`;
-      deleteFolderButton.innerHTML = ` <svg class = "deleteFolderImage" fill="#1280c5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M5.755,20.283,4,8H20L18.245,20.283A2,2,0,0,1,16.265,22H7.735A2,2,0,0,1,5.755,20.283ZM21,4H16V3a1,1,0,0,0-1-1H9A1,1,0,0,0,8,3V4H3A1,1,0,0,0,3,6H21a1,1,0,0,0,0-2Z"></path></g></svg> Delete`;
+        // deleteFolderButton.innerHTML = `<svg class = "deleteFolderImage" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z" fill="#3688FF"></path><path d="M917.3 256H106.7C83.1 256 64 236.9 64 213.3s19.1-42.7 42.7-42.7h810.7c23.6 0 42.7 19.1 42.7 42.7S940.9 256 917.3 256zM618.7 128H405.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h213.3c23.6 0 42.7 19.1 42.7 42.7S642.2 128 618.7 128zM405.3 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7S448 403 448 426.6v256c0 23.6-19.1 42.7-42.7 42.7zM618.7 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v256c-0.1 23.6-19.2 42.7-42.7 42.7z" fill="#5F6379"></path></g></svg>`;
+        deleteFolderButton.innerHTML = ` <svg class = "deleteFolderImage" fill="#1280c5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M5.755,20.283,4,8H20L18.245,20.283A2,2,0,0,1,16.265,22H7.735A2,2,0,0,1,5.755,20.283ZM21,4H16V3a1,1,0,0,0-1-1H9A1,1,0,0,0,8,3V4H3A1,1,0,0,0,3,6H21a1,1,0,0,0,0-2Z"></path></g></svg> Delete`;
 
-      renameFolderButton.innerHTML = `<svg class = "renameFolderImage" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path opacity="0.5" d="M20.8487 8.71306C22.3844 7.17735 22.3844 4.68748 20.8487 3.15178C19.313 1.61607 16.8231 1.61607 15.2874 3.15178L14.4004 4.03882C14.4125 4.0755 14.4251 4.11268 14.4382 4.15035C14.7633 5.0875 15.3768 6.31601 16.5308 7.47002C17.6848 8.62403 18.9133 9.23749 19.8505 9.56262C19.888 9.57563 19.925 9.58817 19.9615 9.60026L20.8487 8.71306Z" fill="#1280c5"></path> <path d="M14.4386 4L14.4004 4.03819C14.4125 4.07487 14.4251 4.11206 14.4382 4.14973C14.7633 5.08687 15.3768 6.31538 16.5308 7.4694C17.6848 8.62341 18.9133 9.23686 19.8505 9.56199C19.8876 9.57489 19.9243 9.58733 19.9606 9.59933L11.4001 18.1598C10.823 18.7369 10.5343 19.0255 10.2162 19.2737C9.84082 19.5665 9.43469 19.8175 9.00498 20.0223C8.6407 20.1959 8.25351 20.3249 7.47918 20.583L3.39584 21.9442C3.01478 22.0712 2.59466 21.972 2.31063 21.688C2.0266 21.4039 1.92743 20.9838 2.05445 20.6028L3.41556 16.5194C3.67368 15.7451 3.80273 15.3579 3.97634 14.9936C4.18114 14.5639 4.43213 14.1578 4.7249 13.7824C4.97307 13.4643 5.26165 13.1757 5.83874 12.5986L14.4386 4Z" fill="#1280c5"></path> </g></svg>Rename`;
+        renameFolderButton.innerHTML = `<svg class = "renameFolderImage" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path opacity="0.5" d="M20.8487 8.71306C22.3844 7.17735 22.3844 4.68748 20.8487 3.15178C19.313 1.61607 16.8231 1.61607 15.2874 3.15178L14.4004 4.03882C14.4125 4.0755 14.4251 4.11268 14.4382 4.15035C14.7633 5.0875 15.3768 6.31601 16.5308 7.47002C17.6848 8.62403 18.9133 9.23749 19.8505 9.56262C19.888 9.57563 19.925 9.58817 19.9615 9.60026L20.8487 8.71306Z" fill="#1280c5"></path> <path d="M14.4386 4L14.4004 4.03819C14.4125 4.07487 14.4251 4.11206 14.4382 4.14973C14.7633 5.08687 15.3768 6.31538 16.5308 7.4694C17.6848 8.62341 18.9133 9.23686 19.8505 9.56199C19.8876 9.57489 19.9243 9.58733 19.9606 9.59933L11.4001 18.1598C10.823 18.7369 10.5343 19.0255 10.2162 19.2737C9.84082 19.5665 9.43469 19.8175 9.00498 20.0223C8.6407 20.1959 8.25351 20.3249 7.47918 20.583L3.39584 21.9442C3.01478 22.0712 2.59466 21.972 2.31063 21.688C2.0266 21.4039 1.92743 20.9838 2.05445 20.6028L3.41556 16.5194C3.67368 15.7451 3.80273 15.3579 3.97634 14.9936C4.18114 14.5639 4.43213 14.1578 4.7249 13.7824C4.97307 13.4643 5.26165 13.1757 5.83874 12.5986L14.4386 4Z" fill="#1280c5"></path> </g></svg>Rename`;
 
-      folderOptionButton.innerHTML = `<svg class = "folderOptionImage" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="12" cy="6" r="2" transform="rotate(90 12 6)" fill="#1280c5"></circle> <circle cx="12" cy="12" r="2" transform="rotate(90 12 12)" fill="#1280c5"></circle> <path d="M12 20C10.8954 20 10 19.1046 10 18C10 16.8954 10.8954 16 12 16C13.1046 16 14 16.8954 14 18C14 19.1046 13.1046 20 12 20Z" fill="#1280c5"></path> </g></svg>`;
+        folderOptionButton.innerHTML = `<svg class = "folderOptionImage" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="12" cy="6" r="2" transform="rotate(90 12 6)" fill="#1280c5"></circle> <circle cx="12" cy="12" r="2" transform="rotate(90 12 12)" fill="#1280c5"></circle> <path d="M12 20C10.8954 20 10 19.1046 10 18C10 16.8954 10.8954 16 12 16C13.1046 16 14 16.8954 14 18C14 19.1046 13.1046 20 12 20Z" fill="#1280c5"></path> </g></svg>`;
 
-      folderButton.addEventListener("click", () => {
-        //Selected Folder Colored
-        if (previousFolderButton) {
-          previousFolderButton.style.backgroundColor = "";
-          previousFolderButton.style.color = "";
+        folderButton.addEventListener("click", () => {
+          //Selected Folder Colored
+          if (previousFolderButton) {
+            previousFolderButton.style.backgroundColor = "";
+            previousFolderButton.style.color = "";
+          }
+          folderButton.style.backgroundColor = "#0e649a";
+          folderButton.style.color = "#ffffff";
+
+          // Store selected folder information in localStorage
+          localStorage.setItem("selectedFolderId", folder.id);
+
+          previousFolderButton = folderButton;
+
+          if (window.innerWidth <= 780) {
+            folderNav.style.display = "none";
+            notesNav.style.display = "block";
+          }
+
+          if (window.innerWidth > 780 && window.innerWidth <= 1088) {
+            folderNav.style.display = "none";
+            notesNav.style.display = "block";
+          }
+
+          //All Notes Of The Folder Fetched
+          fetchNotesByFolderId(folder.id);
+          selectedFolderId = folder.id;
+        });
+
+        // Check if the current folder is the selected one from localStorage
+        if (folder.id === selectedFolderIdFromStorage) {
+          folderButton.style.backgroundColor = "#0e649a";
+          folderButton.style.color = "#ffffff";
+          previousFolderButton = folderButton;
+          fetchNotesByFolderId(folder.id);
+          selectedFolderId = folder.id;
         }
-        folderButton.style.backgroundColor = "#0e649a";
-        folderButton.style.color = "#ffffff";
 
-        previousFolderButton = folderButton;
-        //All Notes Of The Folder Fetched
-        fetchNotesByFolderId(folder.id);
-        selectedFolderId = folder.id;
-      });
+        deleteFolderButton.addEventListener("click", () => {
+          deleteFolderById(folder.id, userId);
+        });
 
-      deleteFolderButton.addEventListener("click", () => {
-        deleteFolderById(folder.id);
-      });
+        renameFolderButton.addEventListener("click", () => {
+          // renameFolderById(folder.id);
+        });
 
-      renameFolderButton.addEventListener("click", () => {
-        // renameFolderById(folder.id);
-      });
+        folderOptionButton.addEventListener("click", () => {
+          //Toggle Visibility of the FolderOption
+          if (folderOptionContainer.innerHTML === "") {
+            folderOptionContainer?.appendChild(deleteFolderButton);
+            // folderOptionContainer?.appendChild(renameFolderButton);
+            // Get the position of the clicked button
+            const buttonRect = folderOptionButton.getBoundingClientRect();
 
-      folderOptionButton.addEventListener("click", () => {
-        //Toggle Visibility of the FolderOption
-        if (folderOptionContainer.innerHTML === "") {
-          folderOptionContainer?.appendChild(deleteFolderButton);
-          folderOptionContainer?.appendChild(renameFolderButton);
-          // Get the position of the clicked button
-          const buttonRect = folderOptionButton.getBoundingClientRect();
-
-          // Set the position of the folderOptionContainer
-          folderOptionContainer.style.top = buttonRect.bottom - 53 + "px";
-          folderOptionContainer.style.left = buttonRect.left - 122 + "px";
-        } else {
-          folderOptionContainer.innerHTML = "";
-        }
-      });
-
-      //-------------------------- HIDE THE OPTIONS WHEN CLICKED ELSEWHERE ------------------------------------------------------------//
-      document.addEventListener("click", (event) => {
-        if (
-          //Check if the click is outside folderOptionButton
-          folderOptionButton && // check if folderOptionButton is not null and exists
-          !(folderOptionButton as Node).contains(event.target as Node) //check if click is outside the folderOptionButton
-        ) {
-          // Check if the click is also outside the folderOptionContainer
-          if (
-            folderOptionContainer && // check if folderOptionContainer is not null and exists
-            !(folderOptionContainer as Node).contains(event.target as Node) // check if click is outside the folderOPtionContainer
-          ) {
-            // Hide the folderOptionContainer
+            // Set the position of the folderOptionContainer
+            folderOptionContainer.style.top = buttonRect.bottom - 48 + "px";
+            folderOptionContainer.style.left = buttonRect.left - 122 + "px";
+          } else {
             folderOptionContainer.innerHTML = "";
           }
-        }
-      });
+        });
 
-      folderButtonsContainer?.append(folderButton);
-      folderButtonsContainer?.append(folderOptionButton);
-      //Everything is inside the folderContainer including the dropdown
-      folderContainer?.prepend(folderButtonsContainer); //Folder Button inside the folderContainer
-      folderContainer?.prepend(folderOptionContainer); //Dropdown inside the folderContainer
+        //-------------------------- HIDE THE OPTIONS WHEN CLICKED ELSEWHERE ------------------------------------------------------------//
+        document.addEventListener("click", (event) => {
+          if (
+            //Check if the click is outside folderOptionButton
+            folderOptionButton && // check if folderOptionButton is not null and exists
+            !(folderOptionButton as Node).contains(event.target as Node) //check if click is outside the folderOptionButton
+          ) {
+            // Check if the click is also outside the folderOptionContainer
+            if (
+              folderOptionContainer && // check if folderOptionContainer is not null and exists
+              !(folderOptionContainer as Node).contains(event.target as Node) // check if click is outside the folderOPtionContainer
+            ) {
+              // Hide the folderOptionContainer
+              folderOptionContainer.innerHTML = "";
+            }
+          }
+        });
+
+        folderButtonsContainer?.append(folderButton);
+        folderButtonsContainer?.append(folderOptionButton);
+        //Everything is inside the folderContainer including the dropdown
+        folderContainer?.prepend(folderButtonsContainer); //Folder Button inside the folderContainer
+        folderContainer?.prepend(folderOptionContainer); //Dropdown inside the folderContainer
+      }
     });
   } catch (error) {
     console.log("Error fetching folders:", error);

@@ -7,21 +7,30 @@ body,
 html {
   height: 100%;
   margin: 0;
+  overflow: hidden;
 }
 
 main {
-  margin: 10px 15px;
+  //   margin: 10px 15px;
   display: flex;
   flex-direction: row;
   justify-content: left;
-  height: 100vh; /* Set a fixed height for the main container */
+  height: 100%;
+  //   flex: 1;
+  //   overflow: hidden;
 }
 
 .folderNav,
 .notesNav,
-.textSide {
-  //   flex: 1;
+.mainNote {
+  height: 90%;
   overflow-y: auto; /* Enable vertical scrolling for each column */
+}
+
+.mainNote {
+  //   overflow: hidden;
+  padding-right: 20px;
+  padding-left: 20px;
 }
 
 button {
@@ -66,4 +75,29 @@ input::placeholder {
 
 input:hover {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background-color: #f8f8f8; /* Light background color */
+  font-size: 20px;
+  border: 1px solid #ccc; /* Border to provide a subtle separation */
+  border-radius: 5px; /* Rounded corners for a modern look */
+  outline: none;
+  padding: 25px; /* Adequate padding for better readability */
+  resize: none; /* Disable resizing of the textarea */
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transitions */
+  font-family: "Roboto", sans-serif;
+}
+
+textarea:focus {
+  border-color: #3498db; /* Highlight border color on focus */
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.7); /* Add a subtle box shadow on focus */
+}
+
+.backImage {
+  height: 40px;
+  padding: 0;
 }

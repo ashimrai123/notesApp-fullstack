@@ -5,6 +5,9 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: sticky;
+  z-index: 1000;
+  top: 0;
 }
 
 #notesHeading {
@@ -39,19 +42,32 @@ header {
   flex-direction: column;
 }
 
-#noteArea {
-  background-color: blue;
-  width: 550px;
-}
-
 .mainNote {
   border: 2px solid lightgrey;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+#noteArea {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+}
+
+.note {
+  flex: 1;
+  width: 100%;
+  height: 100%;
 }
 
 .folderNav {
   background-color: #fbfbfd;
   border: 2px solid lightgrey;
+  height: 100%;
   width: 300px;
+  flex-shrink: 0;
   padding: 0px 20px 0px 10px;
 }
 
@@ -135,7 +151,7 @@ header {
   border-left: 1px solid lightgrey;
   border-right: 1px solid lightgrey;
   padding: 5px 10px 5px 10px;
-  border-radius: 10px 10px 0 0;
+  border-radius: 10px;
   background-color: #e6e6e6;
 }
 
@@ -160,11 +176,18 @@ header {
   z-index: 1;
 }
 
+.backToFolders {
+  border: none;
+  padding: 0;
+}
+
 .notesNav {
   display: flex;
   flex-direction: column;
   width: 300px;
-  padding: 6px 20px 0px 20px;
+  height: 100%;
+  flex-shrink: 0;
+  padding: 0px 20px 0px 10px;
   border: 2px solid lightgrey;
 }
 
@@ -226,7 +249,7 @@ header {
   border-left: 1px solid lightgrey;
   border-right: 1px solid lightgrey;
   padding: 5px 10px 5px 10px;
-  border-radius: 10px 10px 0 0;
+  border-radius: 10px;
   background-color: #e6e6e6;
 }
 
@@ -281,9 +304,21 @@ header {
   display: flex;
   justify-content: space-between;
 }
+.toolbar__backToNotes {
+  display: none;
+  border: none;
+}
+.toolbar__export {
+  border: none;
+  padding: 4px;
+}
+
+.backToFolders {
+  display: none;
+}
 
 .exportImage {
-  height: 20px;
+  height: 40px;
 }
 
 .deleteNoteToolImage {
@@ -299,20 +334,26 @@ body,
 html {
   height: 100%;
   margin: 0;
+  overflow: hidden;
 }
 
 main {
-  margin: 10px 15px;
   display: flex;
   flex-direction: row;
   justify-content: left;
-  height: 100vh; /* Set a fixed height for the main container */
+  height: 100%;
 }
 
 .folderNav,
 .notesNav,
-.textSide {
+.mainNote {
+  height: 90%;
   overflow-y: auto; /* Enable vertical scrolling for each column */
+}
+
+.mainNote {
+  padding-right: 20px;
+  padding-left: 20px;
 }
 
 button {
@@ -357,6 +398,31 @@ input::placeholder {
 
 input:hover {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background-color: #f8f8f8; /* Light background color */
+  font-size: 20px;
+  border: 1px solid #ccc; /* Border to provide a subtle separation */
+  border-radius: 5px; /* Rounded corners for a modern look */
+  outline: none;
+  padding: 25px; /* Adequate padding for better readability */
+  resize: none; /* Disable resizing of the textarea */
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transitions */
+  font-family: "Roboto", sans-serif;
+}
+
+textarea:focus {
+  border-color: #3498db; /* Highlight border color on focus */
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.7); /* Add a subtle box shadow on focus */
+}
+
+.backImage {
+  height: 40px;
+  padding: 0;
 }
 
 /* Hide the main scrollbar by default */
@@ -415,6 +481,68 @@ main::-webkit-scrollbar-thumb:hover {
 .notesNav::-webkit-scrollbar-thumb:hover,
 .textSide::-webkit-scrollbar-thumb:hover {
   background-color: #2980b9; /* Darker blue color when hovered */
+}
+
+.mainNote {
+  display: block;
+}
+
+@media (max-width: 1088px) {
+  .folderNav {
+    display: none; /* Hide the folderNav */
+  }
+  .backToFolders {
+    display: block;
+  }
+}
+@media (max-width: 780px) {
+  .folderNav {
+    display: block;
+  }
+  .toolbar__backToNotes {
+    display: block;
+  }
+  .notesNav {
+    width: 95%;
+    display: none; /* Hide the notesNav */
+  }
+  .notesNavHead {
+    width: 100%;
+  }
+  .noteContainer {
+    width: 100%;
+  }
+  .noteButtonsContainer {
+    width: 100%;
+  }
+  #searchNotesBar {
+    width: 100%;
+  }
+  .noteButton {
+    width: 100%;
+  }
+  .folderNav {
+    width: 89%;
+    display: none; /* Hide the notesNav */
+  }
+  .addFolder {
+    width: 100%;
+  }
+  #folderContainer {
+    width: 100%;
+  }
+  .folderButtonsContainer {
+    width: 100%;
+  }
+  .searchFolder {
+    width: 100%;
+  }
+  .searchFolderBar {
+    width: 100%;
+  }
+  .folderButton {
+    width: 100%;
+  }
 }
 
 /*# sourceMappingURL=style.css.map */

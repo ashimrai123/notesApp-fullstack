@@ -65,8 +65,10 @@ export const getAllNotesByFolderId = async (id: number): Promise<note[]> => {
   return await db(notesTable).select("*").where("folder_id", "=", id);
 };
 
-export const getAllFolders = async (): Promise<folder[]> => {
-  return await db(folderTable).select("*");
+export const getAllFolders = async (userId: any): Promise<folder[]> => {
+  return await db(folderTable)
+    .select("*")
+    .where("user_id", "=", db.raw("?", [BigInt(parseInt(userId))]));
 };
 
 export const createNote = async (
@@ -82,9 +84,12 @@ export const createNote = async (
   return newTask as note;
 };
 
-export const createFolder = async (folder_name: string): Promise<folder> => {
+export const createFolder = async (
+  folder_name: string,
+  user_id: any
+): Promise<folder> => {
   const [newFolder] = await db(folderTable)
-    .insert({ folder_name, userId: "2" })
+    .insert({ folder_name, user_id })
     .returning("*");
 
   return newFolder as folder;

@@ -120,8 +120,8 @@ export const getAllFolders = async (
 ): Promise<void> => {
   try {
     // Call the getAllFolders function from the services
-    const folders = await services.getAllFolders();
-
+    const { id } = req.params;
+    const folders = await services.getAllFolders(parseInt(id));
     //Send a JSON response containing the folders array to the client
     res.json(folders);
   } catch (error) {
@@ -162,8 +162,9 @@ export const createFolder = async (
     //   res.status(400).json({ error: error.message });
     //   return;
     // }
+    const { id } = req.params;
     const { folder_name } = req.body;
-    const newFolder = await services.createFolder(folder_name);
+    const newFolder = await services.createFolder(folder_name, parseInt(id));
     res.status(201).json(newFolder);
   } catch (error) {
     console.error(error);

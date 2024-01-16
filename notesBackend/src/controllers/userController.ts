@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import * as userService from '../services/userService';
-import { createUserSchema, loginUserSchema } from '../validators/userValidator';
+import { Request, Response } from "express";
+import * as userService from "../services/userService";
+import { createUserSchema, loginUserSchema } from "../validators/userValidator";
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
   // Validate request body when creating a user
@@ -15,14 +15,14 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
   // Check if new email already exists
   const existingUser = await userService.findUserByEmail(email);
   if (existingUser) {
-    res.status(400).json({ error: 'Email is already registered' });
+    res.status(400).json({ error: "Email is already registered" });
     return;
   }
 
   // Create New User
   const newUser = await userService.createUser({ username, email, password });
 
-  res.status(201).json({ message: 'User created successfully', user: newUser });
+  res.status(201).json({ message: "User created successfully", user: newUser });
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
@@ -39,30 +39,20 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   const userLogin = await userService.findUserByEmail(email);
 
   // Check if the user exists and the password is valid
-  if (!userLogin || !(await userService.validatePassword(userLogin, password))) {
-    res.status(401).json({ error: 'Invalid email or password' });
+  if (
+    !userLogin ||
+    !(await userService.validatePassword(userLogin, password))
+  ) {
+    res.status(401).json({ error: "Invalid email or password" });
     return;
   }
+  // Get userId from the user's email
+  const userid = await userService.getUserIdFromEmail(email);
 
   // Generate both access and refresh tokens
   const { accessToken, refreshToken } = userService.generateTokens(userLogin);
 
-  res.status(200).json({ message: 'Login Successful', accessToken, refreshToken });
-};
-
-// Handle token refreshing
-export const refreshToken = (req: Request, res: Response): void => {
-  const { refreshToken } = req.body;
-  if (!refreshToken) {
-    res.status(400).json({ error: 'Refresh token is required' });
-    return;
-  }
-
-  const newAccessToken = userService.refreshToken(refreshToken);
-
-  if (newAccessToken) {
-    res.json({ accessToken: newAccessToken });
-  } else {
-    res.status(401).json({ error: 'Invalid refresh token' });
-  }
+  res
+    .status(200)
+    .json({ message: "Login Successful", accessToken, refreshToken, userid });
 };

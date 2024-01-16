@@ -1,18 +1,7 @@
 import axios from "axios";
+import { initializePage } from "../main";
 
 export async function createNote(folder_id: number) {
-  // Create a note container
-  //   const noteContainer = document.getElementById("noteContainer");
-
-  //   // Create a textarea for the user to enter content
-  //   const textArea = document.createElement("textarea");
-  //   textArea.rows = 5;
-  //   textArea.cols = 30;
-
-  //   // Append the textarea to the note container
-  //   noteContainer?.appendChild(textArea);
-
-  // Make a POST request to create a new note
   axios
     .post("http://localhost:8000/note", {
       title: "New Note",
@@ -25,3 +14,26 @@ export async function createNote(folder_id: number) {
       console.error("Error creating note:", error.response.data);
     });
 }
+
+export const deleteNoteById = async (noteId: number) => {
+  try {
+    await axios.delete(`http://localhost:8000/note/${noteId}`);
+    console.log("Note deleted successfully");
+    //Giving some delay to give little time for database operation
+    setTimeout(async () => {
+      await initializePage();
+    }, 100);
+  } catch (error) {
+    console.log("Error deleting note: ", error);
+  }
+};
+
+//Function to update notes
+export const updateNotes = async (noteId: number, content: string) => {
+  try {
+    await axios.put(`http://localhost:8000/updateNote/${noteId}`, { content });
+    console.log("Note updated successfully");
+  } catch (error) {
+    console.log("Error updating notes:", error);
+  }
+};

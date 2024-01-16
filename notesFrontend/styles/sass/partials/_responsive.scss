@@ -1,0 +1,70 @@
+.mainNote {
+  display: block;
+}
+
+@media (max-width: 1088px) {
+  .folderNav {
+    display: none; /* Hide the folderNav */
+  }
+  .backToFolders {
+    display: block;
+  }
+}
+
+@media (max-width: 780px) {
+  .folderNav {
+    display: block;
+  }
+  .toolbar {
+    &__backToNotes {
+      display: block;
+    }
+  }
+
+  //----------------FOR NOTES NAV -----------------------//
+  .notesNav {
+    width: 95%;
+    display: none; /* Hide the notesNav */
+  }
+  .notesNavHead {
+    width: 100%;
+  }
+  .noteContainer {
+    width: 100%;
+  }
+  .noteButtonsContainer {
+    width: 100%;
+  }
+
+  #searchNotesBar {
+    width: 100%;
+  }
+  .noteButton {
+    width: 100%;
+  }
+  //----------------FOR FOLDERS NAV -----------------------//
+
+  .folderNav {
+    width: 89%;
+    display: none; /* Hide the notesNav */
+  }
+  .addFolder {
+    width: 100%;
+  }
+  #folderContainer {
+    width: 100%;
+  }
+  .folderButtonsContainer {
+    width: 100%;
+  }
+
+  .searchFolder {
+    width: 100%;
+  }
+  .searchFolderBar {
+    width: 100%;
+  }
+  .folderButton {
+    width: 100%;
+  }
+}

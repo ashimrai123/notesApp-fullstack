@@ -1,9 +1,9 @@
 .folderNav {
   background-color: #fbfbfd;
   border: 2px solid lightgrey;
-
-  // height: 700px;
+  height: 100%;
   width: 300px;
+  flex-shrink: 0;
   padding: 0px 20px 0px 10px;
 }
 
@@ -92,7 +92,7 @@
   border-right: 1px solid lightgrey;
 
   padding: 5px 10px 5px 10px;
-  border-radius: 10px 10px 0 0;
+  border-radius: 10px;
 
   background-color: #e6e6e6;
 }
@@ -111,12 +111,14 @@
   background-color: #e6e6e6;
 }
 
-.deleteFolderButton {
-}
-
 .folderAllOptionsContainer {
   display: flex;
   flex-direction: column;
   position: absolute;
   z-index: 1;
+}
+
+.backToFolders {
+  border: none;
+  padding: 0;
 }

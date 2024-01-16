@@ -1,10 +1,27 @@
 .toolbar {
   display: flex;
   justify-content: space-between;
+
+  &__backToNotes {
+    display: none;
+    border: none;
+  }
+
+  &__font {
+  }
+
+  &__export {
+    border: none;
+    padding: 4px;
+  }
+}
+
+.backToFolders {
+  display: none;
 }
 
 .exportImage {
-  height: 20px;
+  height: 40px;
 }
 
 .deleteNoteToolImage {
